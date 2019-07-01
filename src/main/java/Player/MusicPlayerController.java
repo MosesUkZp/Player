@@ -2,13 +2,11 @@ package Player;
 
 import javazoom.jlgui.basicplayer.BasicPlayer;
 import javazoom.jlgui.basicplayer.BasicPlayerException;
-
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 
 public class MusicPlayerController extends JFrame implements ActionListener {
     private JPanel panel1;
@@ -28,8 +26,10 @@ public class MusicPlayerController extends JFrame implements ActionListener {
     private JProgressBar progressSong;
     private File songFile;
     private static BasicPlayer player = new BasicPlayer();
+    private SourceDataLine m_line;
+    private FloatControl m_gainControl;
 
-    public MusicPlayerController(){
+    private MusicPlayerController(){
 
         textFieldSong.setEditable(false);
         textFieldSong.setText("Waiting for track...");
@@ -44,7 +44,7 @@ public class MusicPlayerController extends JFrame implements ActionListener {
         repeatButton.addActionListener(this);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         JFrame playerFrame = new JFrame( "Player" );
         playerFrame.setContentPane(new MusicPlayerController().panel1);
@@ -52,7 +52,6 @@ public class MusicPlayerController extends JFrame implements ActionListener {
         playerFrame.pack();
         playerFrame.setVisible(true);
     }
-
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -62,18 +61,12 @@ public class MusicPlayerController extends JFrame implements ActionListener {
             pause();
         } else if (e.getSource() == openFileButton) {
             open();
-//        } else if (e.getSource() == volumeDownButton) {
+//        } else if (e.getSource() == sliderValue) {
 //            volumeDownBtn();
-//        } else if (e.getSource() == volumeUpButton) {
+//        } else if (e.getSource() == sliderValue) {
 //            volumeUpBtn();
 //        } else if (e.getSource() == volumeFullButton) {
 //            volumeFullBtn();
-        }else if (e.getSource() == repeatButton) {
-            try {
-                repeat();
-            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException | BasicPlayerException e1) {
-                e1.printStackTrace();
-            }
         }else if (e.getSource() == muteButton) {
             MuteBtn();
         } else {
@@ -96,27 +89,13 @@ public class MusicPlayerController extends JFrame implements ActionListener {
             player.open(songFile);
             player.play();
             System.out.println("Play " + songFile.getName());
-
         } catch (BasicPlayerException e1) {
             e1.printStackTrace();
         }
     }
 
-    private void repeat () throws LineUnavailableException, IOException, UnsupportedAudioFileException, BasicPlayerException {
+    private void repeat () {
 
-//        if (player.getStatus() == 0){
-//            player.play();
-//        }
-
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(songFile);
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioInputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        FloatControl volume= (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        volume.setValue(1.0f);
-        clip.start();
-        clip.drain();
-        clip.close();
     }
 
     private void start() {
@@ -273,4 +252,5 @@ public class MusicPlayerController extends JFrame implements ActionListener {
 //        }
 //    }
 
-    }
+
+}
